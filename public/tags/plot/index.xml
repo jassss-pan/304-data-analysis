@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>plot on min_304</title>
+    <link>/tags/plot/</link>
+    <description>Recent content in plot on min_304</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 Sep 2020 21:13:14 -0500</lastBuildDate><atom:link href="/tags/plot/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Crime rate and its&#39; relationship with politics</title>
+      <link>/2020/09/24/crime-rate-and-its-relationship-with-politics/</link>
+      <pubDate>Thu, 24 Sep 2020 21:13:14 -0500</pubDate>
+      
+      <guid>/2020/09/24/crime-rate-and-its-relationship-with-politics/</guid>
+      <description>Part I. Abstraction Neighbourhood crime rate is always a topic that people care about. In this short data set analysis, I will discuss the change of crime rates for three areas within three year. The main factor I choose is the change of president for this country and his policy that related to refugee. Moreover, I want to see if this data can make a prediction of future trend in crime rates.</description>
+    </item>
+    
+  </channel>
+</rss>

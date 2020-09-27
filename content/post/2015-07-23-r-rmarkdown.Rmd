@@ -1,0 +1,125 @@
+---
+title: "Crime rate and its' relationship with politics"
+author: "Minhui Pan"
+date: 2020-09-24T21:13:14-05:00
+Bibliography:"references.bib"
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+# Part I. Abstraction
+Neighbourhood crime rate is always a topic that people care about. In this short data set analysis, I will discuss the change of crime rates for three areas within three year. The main factor I choose is the change of president for this country and his policy that related to refugee. Moreover, I want to see if this data can make a prediction of future trend in crime rates. 
+
+# PART II. Introduction
+
+The Toronto police service has released a set of data on the Toronto open data portal about neighbourhood crime rates. This dataset includes crime data through the year of 2014 and the year of 2019, and covers six kinds of crime and their year averages. It also calculated the crime rates per 100,000 people by neighbourhood based on 2016 Census population.
+Surely there are many reasons of committing crime both psychologically (for example: antisocial personality) and materially(out of money). However, in this project I want to mainly focus on the impact under changing government, so I create several ggplot for the crime rate (Assault), and from these graph we can clearly see some changes.
+
+The reason of choosing 2014 is because this is the year right before Trudeau has became the president of Canada, and start from the year of 2016, he decided to open the gate, adopt a monetary refugee policy and accept more refugees came into Canada. 
+
+As I mentioned above, there are many affecting factors that can affect the the change of crime rate. Randomly choosing a set of data within a short period time in a fixed area cannot represent the whole picture, it cannot summarize previous situation and also cannot be a prediction of  the future status. In the future we should keep tracking all the factors and objectively evaluate the dataset in order to get a periodical conclusion.
+
+#PART III. Data introduction
+Over all this data includes 140 observations of 62 variables,I picked "Assault" as my object of study, and choose 3 areas to make a comparison.
+
+#Conclusion
+I picked 3 out of 140 areas, the one with the largest population-"Woburn" while the other 2 of them are randomly picked and 1 kind of crime for all of the area in order to make a comparision. Did more population means higher crime rates? From the graph below, the answer is yes. Is it means this area is more dangerous? Perhaps not, because sometimes the larger the population, the higher the frequency.
+The pattern of these 3 data set is the same-the highest Assault rate happens in the year of 2015,and after that we can see a decrease in the year of 2016. However, the year of 2016 is when Trudeau adopted the new policy instead of 2015. Based on the data that Toronto policy provided, the only thing we can do is after see the trend and make many guesses. It is hard to say that crime rate is related to politics based on current statistics data.
+Like I said, there are many factors that can drive the occurrence of crime, we cannot just based on these data and make a biased conclusion, so to prove our guesses, we have to know more background information and collect more data.
+##Rmarkdown
+
+```{r}
+install.packages("devtools")
+install.packages("opendatatoronto")
+install.packages("openxlsx")
+
+
+library(opendatatoronto)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(openxlsx)
+```
+
+# get package
+```{r}
+package <- show_package("fc4d95a6-591f-411f-af17-327e6c5d03c7")
+package
+```
+
+# get all resources for this package
+```{r}
+resources <- list_package_resources("fc4d95a6-591f-411f-af17-327e6c5d03c7")
+```
+
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+```{r}
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+```
+
+
+# load the first datastore resource as a sample
+```{r}
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
+data
+```
+
+```{r}
+list_package_resources("https://open.toronto.ca/dataset/neighbourhood-crime-rates/") %>% get_resource()
+```
+
+
+```{r}
+head(data)
+summary(data)
+```
+
+
+```{r}
+ggplot(data=data,aes(x = Neighbourhood, y= Population)) + geom_bar(stat='identity', position=position_dodge(), width = 1, size=0.25, colour = "pink")
+```
+
+
+```{r}
+target <- c("Woburn","Danforth","Ionview")
+filter(data, Neighbourhood%in% target)
+
+data2<- read.xlsx("Book2.xlsx", sheet = 1)
+View(data2)
+
+ggplot(data=data2,aes(x=Year,y=Rate))+geom_bar(stat = "identity",width = 0.5, size=0.25)+geom_line()
+
+data1<- read.xlsx("Book1.xlsx", sheet = 1)
+View(data1)
+
+ggplot(data=data1,aes(x=Year,y=Rates))+geom_bar(stat = "identity",width = 0.5, size=0.25)+geom_line()
+
+data3<- read.xlsx("Book3.xlsx", sheet = 1)
+View(data3)
+
+ggplot(data=data3,aes(x=Year,y=Rates))+geom_bar(stat = "identity",width = 0.5, size=0.25)+geom_line()
+```
+
+
+###Reference
+-  Hadley Wickham, Jim Hester and Winston Chang (2020). devtools: Tools
+  to Make Developing R Packages Easier. R package version 2.3.1.
+  https://CRAN.R-project.org/package=devtools
+
+- JJ Allaire and Yihui Xie and Jonathan McPherson and Javier Luraschi
+  and Kevin Ushey and Aron Atkins and Hadley Wickham and Joe Cheng and
+  Winston Chang and Richard Iannone (2020). rmarkdown: Dynamic
+  Documents for R. R package version 2.3. URL https://rmarkdown.rstudio.com.
+  
+- R Core Team (2020). R: A language and environment for statistical
+  computing. R Foundation for Statistical Computing, Vienna, Austria.
+  URL https://www.R-project.org/.
+  
+- Sharla Gelfand (2020). opendatatoronto: Access the City of Toronto
+  Open Data Portal. R package version 0.1.3.
+  https://CRAN.R-project.org/package=opendatatoronto

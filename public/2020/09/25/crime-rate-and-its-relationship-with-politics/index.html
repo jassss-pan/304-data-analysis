@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.75.1" />
+
+
+<title>Crime rate and its&#39; relationship with politics - min_304</title>
+<meta property="og:title" content="Crime rate and its&#39; relationship with politics - min_304">
+
+
+  <link href='../../../../favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../../css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../../" class="nav-logo">
+    <img src="../../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../../about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">16 min read</span>
+    
+
+    <h1 class="article-title">Crime rate and its&#39; relationship with politics</h1>
+
+    
+    <span class="article-date">2020-09-25</span>
+    
+
+    <div class="article-content">
+      
+
+
+<div id="part-i.-abstraction" class="section level1">
+<h1>Part I. Abstraction</h1>
+<p>Neighbourhood crime rate is always a topic that people care about. In this short data set analysis, I will discuss the change of crime rates for three areas within three year. The main factor I choose is the change of president for this country and his policy that related to refugee. Moreover, I want to see if this data can make a prediction of future trend in crime rates.</p>
+</div>
+<div id="part-ii.-introduction" class="section level1">
+<h1>PART II. Introduction</h1>
+<p>The Toronto police service has released a set of data on the Toronto open data portal about neighbourhood crime rates. This dataset includes crime data through the year of 2014 and the year of 2019, and covers six kinds of crime and their year averages. It also calculated the crime rates per 100,000 people by neighbourhood based on 2016 Census population.
+Surely there are many reasons of committing crime both psychologically (for example: antisocial personality) and materially(out of money). However, in this project I want to mainly focus on the impact under changing government, so I create several ggplot for the crime rate (Assault), and from these graph we can clearly see some changes.</p>
+<p>The reason of choosing 2014 is because this is the year right before Trudeau has became the president of Canada, and start from the year of 2016, he decided to open the gate, adopt a monetary refugee policy and accept more refugees came into Canada.</p>
+<p>As I mentioned above, there are many affecting factors that can affect the the change of crime rate. Randomly choosing a set of data within a short period time in a fixed area cannot represent the whole picture, it cannot summarize previous situation and also cannot be a prediction of the future status. In the future we should keep tracking all the factors and objectively evaluate the dataset in order to get a periodical conclusion.</p>
+<p>#PART III. Data introduction
+Over all this data includes 140 observations of 62 variables,I picked “Assault” as my object of study, and choose 3 areas to make a comparison.</p>
+<p>#Conclusion
+I picked 3 out of 140 areas, the one with the largest population-“Woburn” while the other 2 of them are randomly picked and 1 kind of crime for all of the area in order to make a comparision. Did more population means higher crime rates? From the graph below, the answer is yes. Is it means this area is more dangerous? Perhaps not, because sometimes the larger the population, the higher the frequency.
+The pattern of these 3 data set is the same-the highest Assault rate happens in the year of 2015,and after that we can see a decrease in the year of 2016. However, the year of 2016 is when Trudeau adopted the new policy instead of 2015. Based on the data that Toronto policy provided, the only thing we can do is after see the trend and make many guesses. It is hard to say that crime rate is related to politics based on current statistics data.
+Like I said, there are many factors that can drive the occurrence of crime, we cannot just based on these data and make a biased conclusion, so to prove our guesses, we have to know more background information and collect more data.
+##Rmarkdown</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)</code></pre>
+<pre><code>## Installing package into &#39;/home/rstudio-user/R/x86_64-pc-linux-gnu-library/4.0&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>install.packages(&quot;opendatatoronto&quot;)</code></pre>
+<pre><code>## Installing package into &#39;/home/rstudio-user/R/x86_64-pc-linux-gnu-library/4.0&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>install.packages(&quot;openxlsx&quot;)</code></pre>
+<pre><code>## Installing package into &#39;/home/rstudio-user/R/x86_64-pc-linux-gnu-library/4.0&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>library(opendatatoronto)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(sf)</code></pre>
+<pre><code>## Linking to GEOS 3.5.1, GDAL 2.2.2, PROJ 4.9.2</code></pre>
+<pre class="r"><code>library(openxlsx)</code></pre>
+</div>
+<div id="get-package" class="section level1">
+<h1>get package</h1>
+<pre class="r"><code>package &lt;- show_package(&quot;fc4d95a6-591f-411f-af17-327e6c5d03c7&quot;)
+package</code></pre>
+<pre><code>## # A tibble: 1 x 10
+##   title id    topics civic_issues excerpt dataset_category num_resources formats
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;                    &lt;int&gt; &lt;chr&gt;  
+## 1 Neig… fc4d… &lt;NA&gt;   &lt;NA&gt;         &lt;NA&gt;    &lt;NA&gt;                         1 &lt;NA&gt;   
+## # … with 2 more variables: refresh_rate &lt;chr&gt;, last_refreshed &lt;date&gt;</code></pre>
+</div>
+<div id="get-all-resources-for-this-package" class="section level1">
+<h1>get all resources for this package</h1>
+<pre class="r"><code>resources &lt;- list_package_resources(&quot;fc4d95a6-591f-411f-af17-327e6c5d03c7&quot;)</code></pre>
+</div>
+<div id="identify-datastore-resources-by-default-toronto-open-data-sets-datastore-resource-format-to-csv-for-non-geospatial-and-geojson-for-geospatial-resources" class="section level1">
+<h1>identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources</h1>
+<pre class="r"><code>datastore_resources &lt;- filter(resources, tolower(format) %in% c(&#39;csv&#39;, &#39;geojson&#39;))</code></pre>
+</div>
+<div id="load-the-first-datastore-resource-as-a-sample" class="section level1">
+<h1>load the first datastore resource as a sample</h1>
+<pre class="r"><code>data &lt;- filter(datastore_resources, row_number()==1) %&gt;% get_resource()
+data</code></pre>
+<pre><code>## Simple feature collection with 140 features and 61 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -79.63923 ymin: 43.581 xmax: -79.1152 ymax: 43.85545
+## CRS:            EPSG:4326
+## # A tibble: 140 x 62
+##    `_id` OBJECTID Neighbourhood Hood_ID Population Assault_2014 Assault_2015
+##    &lt;int&gt;    &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+##  1     1       16 South Parkda… 085          21849          202          226
+##  2     2       17 South Riverd… 070          27876          215          207
+##  3     3       18 St.Andrew-Wi… 040          17812           53           41
+##  4     4       19 Taylor-Massey 061          15683          127           92
+##  5     5       20 Humber Summit 021          12416           76           89
+##  6     6       21 Humbermede    022          15545          117          132
+##  7     7       22 Centennial S… 133          13362           50           39
+##  8     8       23 Church-Yonge… 075          31340          480          495
+##  9     9       24 Clairlea-Bir… 120          26984          247          259
+## 10    10       25 Cliffcrest    123          15935           79           97
+## # … with 130 more rows, and 55 more variables: Assault_2016 &lt;int&gt;,
+## #   Assault_2017 &lt;int&gt;, Assault_2018 &lt;int&gt;, Assault_2019 &lt;int&gt;,
+## #   Assault_AVG &lt;dbl&gt;, Assault_CHG &lt;dbl&gt;, Assault_Rate_2019 &lt;dbl&gt;,
+## #   AutoTheft_2014 &lt;int&gt;, AutoTheft_2015 &lt;int&gt;, AutoTheft_2016 &lt;int&gt;,
+## #   AutoTheft_2017 &lt;int&gt;, AutoTheft_2018 &lt;int&gt;, AutoTheft_2019 &lt;int&gt;,
+## #   AutoTheft_AVG &lt;dbl&gt;, AutoTheft_CHG &lt;dbl&gt;, AutoTheft_Rate_2019 &lt;dbl&gt;,
+## #   BreakandEnter_2014 &lt;int&gt;, BreakandEnter_2015 &lt;int&gt;,
+## #   BreakandEnter_2016 &lt;int&gt;, BreakandEnter_2017 &lt;int&gt;,
+## #   BreakandEnter_2018 &lt;int&gt;, BreakandEnter_2019 &lt;int&gt;,
+## #   BreakandEnter_AVG &lt;dbl&gt;, BreakandEnter_CHG &lt;dbl&gt;,
+## #   BreakandEnter_Rate_2019 &lt;dbl&gt;, Homicide_2014 &lt;int&gt;, Homicide_2015 &lt;int&gt;,
+## #   Homicide_2016 &lt;int&gt;, Homicide_2017 &lt;int&gt;, Homicide_2018 &lt;int&gt;,
+## #   Homicide_2019 &lt;int&gt;, Homicide_AVG &lt;dbl&gt;, Homicide_CHG &lt;dbl&gt;,
+## #   Homicide_Rate_2019 &lt;dbl&gt;, Robbery_2014 &lt;int&gt;, Robbery_2015 &lt;int&gt;,
+## #   Robbery_2016 &lt;int&gt;, Robbery_2017 &lt;int&gt;, Robbery_2018 &lt;int&gt;,
+## #   Robbery_2019 &lt;int&gt;, Robbery_AVG &lt;dbl&gt;, Robbery_CHG &lt;dbl&gt;,
+## #   Robbery_Rate_2019 &lt;dbl&gt;, TheftOver_2014 &lt;int&gt;, TheftOver_2015 &lt;int&gt;,
+## #   TheftOver_2016 &lt;int&gt;, TheftOver_2017 &lt;int&gt;, TheftOver_2018 &lt;int&gt;,
+## #   TheftOver_2019 &lt;int&gt;, TheftOver_AVG &lt;dbl&gt;, TheftOver_CHG &lt;dbl&gt;,
+## #   TheftOver_Rate_2019 &lt;dbl&gt;, Shape__Area &lt;dbl&gt;, Shape__Length &lt;dbl&gt;,
+## #   geometry &lt;POLYGON [°]&gt;</code></pre>
+<pre class="r"><code>list_package_resources(&quot;https://open.toronto.ca/dataset/neighbourhood-crime-rates/&quot;) %&gt;% get_resource()</code></pre>
+<pre><code>## Simple feature collection with 140 features and 61 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -79.63923 ymin: 43.581 xmax: -79.1152 ymax: 43.85545
+## CRS:            EPSG:4326
+## # A tibble: 140 x 62
+##    `_id` OBJECTID Neighbourhood Hood_ID Population Assault_2014 Assault_2015
+##    &lt;int&gt;    &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+##  1     1       16 South Parkda… 085          21849          202          226
+##  2     2       17 South Riverd… 070          27876          215          207
+##  3     3       18 St.Andrew-Wi… 040          17812           53           41
+##  4     4       19 Taylor-Massey 061          15683          127           92
+##  5     5       20 Humber Summit 021          12416           76           89
+##  6     6       21 Humbermede    022          15545          117          132
+##  7     7       22 Centennial S… 133          13362           50           39
+##  8     8       23 Church-Yonge… 075          31340          480          495
+##  9     9       24 Clairlea-Bir… 120          26984          247          259
+## 10    10       25 Cliffcrest    123          15935           79           97
+## # … with 130 more rows, and 55 more variables: Assault_2016 &lt;int&gt;,
+## #   Assault_2017 &lt;int&gt;, Assault_2018 &lt;int&gt;, Assault_2019 &lt;int&gt;,
+## #   Assault_AVG &lt;dbl&gt;, Assault_CHG &lt;dbl&gt;, Assault_Rate_2019 &lt;dbl&gt;,
+## #   AutoTheft_2014 &lt;int&gt;, AutoTheft_2015 &lt;int&gt;, AutoTheft_2016 &lt;int&gt;,
+## #   AutoTheft_2017 &lt;int&gt;, AutoTheft_2018 &lt;int&gt;, AutoTheft_2019 &lt;int&gt;,
+## #   AutoTheft_AVG &lt;dbl&gt;, AutoTheft_CHG &lt;dbl&gt;, AutoTheft_Rate_2019 &lt;dbl&gt;,
+## #   BreakandEnter_2014 &lt;int&gt;, BreakandEnter_2015 &lt;int&gt;,
+## #   BreakandEnter_2016 &lt;int&gt;, BreakandEnter_2017 &lt;int&gt;,
+## #   BreakandEnter_2018 &lt;int&gt;, BreakandEnter_2019 &lt;int&gt;,
+## #   BreakandEnter_AVG &lt;dbl&gt;, BreakandEnter_CHG &lt;dbl&gt;,
+## #   BreakandEnter_Rate_2019 &lt;dbl&gt;, Homicide_2014 &lt;int&gt;, Homicide_2015 &lt;int&gt;,
+## #   Homicide_2016 &lt;int&gt;, Homicide_2017 &lt;int&gt;, Homicide_2018 &lt;int&gt;,
+## #   Homicide_2019 &lt;int&gt;, Homicide_AVG &lt;dbl&gt;, Homicide_CHG &lt;dbl&gt;,
+## #   Homicide_Rate_2019 &lt;dbl&gt;, Robbery_2014 &lt;int&gt;, Robbery_2015 &lt;int&gt;,
+## #   Robbery_2016 &lt;int&gt;, Robbery_2017 &lt;int&gt;, Robbery_2018 &lt;int&gt;,
+## #   Robbery_2019 &lt;int&gt;, Robbery_AVG &lt;dbl&gt;, Robbery_CHG &lt;dbl&gt;,
+## #   Robbery_Rate_2019 &lt;dbl&gt;, TheftOver_2014 &lt;int&gt;, TheftOver_2015 &lt;int&gt;,
+## #   TheftOver_2016 &lt;int&gt;, TheftOver_2017 &lt;int&gt;, TheftOver_2018 &lt;int&gt;,
+## #   TheftOver_2019 &lt;int&gt;, TheftOver_AVG &lt;dbl&gt;, TheftOver_CHG &lt;dbl&gt;,
+## #   TheftOver_Rate_2019 &lt;dbl&gt;, Shape__Area &lt;dbl&gt;, Shape__Length &lt;dbl&gt;,
+## #   geometry &lt;POLYGON [°]&gt;</code></pre>
+<pre class="r"><code>head(data)</code></pre>
+<pre><code>## Simple feature collection with 6 features and 61 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -79.58517 ymin: 43.61273 xmax: -79.28772 ymax: 43.77269
+## CRS:            EPSG:4326
+## # A tibble: 6 x 62
+##   `_id` OBJECTID Neighbourhood Hood_ID Population Assault_2014 Assault_2015
+##   &lt;int&gt;    &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+## 1     1       16 South Parkda… 085          21849          202          226
+## 2     2       17 South Riverd… 070          27876          215          207
+## 3     3       18 St.Andrew-Wi… 040          17812           53           41
+## 4     4       19 Taylor-Massey 061          15683          127           92
+## 5     5       20 Humber Summit 021          12416           76           89
+## 6     6       21 Humbermede    022          15545          117          132
+## # … with 55 more variables: Assault_2016 &lt;int&gt;, Assault_2017 &lt;int&gt;,
+## #   Assault_2018 &lt;int&gt;, Assault_2019 &lt;int&gt;, Assault_AVG &lt;dbl&gt;,
+## #   Assault_CHG &lt;dbl&gt;, Assault_Rate_2019 &lt;dbl&gt;, AutoTheft_2014 &lt;int&gt;,
+## #   AutoTheft_2015 &lt;int&gt;, AutoTheft_2016 &lt;int&gt;, AutoTheft_2017 &lt;int&gt;,
+## #   AutoTheft_2018 &lt;int&gt;, AutoTheft_2019 &lt;int&gt;, AutoTheft_AVG &lt;dbl&gt;,
+## #   AutoTheft_CHG &lt;dbl&gt;, AutoTheft_Rate_2019 &lt;dbl&gt;, BreakandEnter_2014 &lt;int&gt;,
+## #   BreakandEnter_2015 &lt;int&gt;, BreakandEnter_2016 &lt;int&gt;,
+## #   BreakandEnter_2017 &lt;int&gt;, BreakandEnter_2018 &lt;int&gt;,
+## #   BreakandEnter_2019 &lt;int&gt;, BreakandEnter_AVG &lt;dbl&gt;, BreakandEnter_CHG &lt;dbl&gt;,
+## #   BreakandEnter_Rate_2019 &lt;dbl&gt;, Homicide_2014 &lt;int&gt;, Homicide_2015 &lt;int&gt;,
+## #   Homicide_2016 &lt;int&gt;, Homicide_2017 &lt;int&gt;, Homicide_2018 &lt;int&gt;,
+## #   Homicide_2019 &lt;int&gt;, Homicide_AVG &lt;dbl&gt;, Homicide_CHG &lt;dbl&gt;,
+## #   Homicide_Rate_2019 &lt;dbl&gt;, Robbery_2014 &lt;int&gt;, Robbery_2015 &lt;int&gt;,
+## #   Robbery_2016 &lt;int&gt;, Robbery_2017 &lt;int&gt;, Robbery_2018 &lt;int&gt;,
+## #   Robbery_2019 &lt;int&gt;, Robbery_AVG &lt;dbl&gt;, Robbery_CHG &lt;dbl&gt;,
+## #   Robbery_Rate_2019 &lt;dbl&gt;, TheftOver_2014 &lt;int&gt;, TheftOver_2015 &lt;int&gt;,
+## #   TheftOver_2016 &lt;int&gt;, TheftOver_2017 &lt;int&gt;, TheftOver_2018 &lt;int&gt;,
+## #   TheftOver_2019 &lt;int&gt;, TheftOver_AVG &lt;dbl&gt;, TheftOver_CHG &lt;dbl&gt;,
+## #   TheftOver_Rate_2019 &lt;dbl&gt;, Shape__Area &lt;dbl&gt;, Shape__Length &lt;dbl&gt;,
+## #   geometry &lt;POLYGON [°]&gt;</code></pre>
+<pre class="r"><code>summary(data)</code></pre>
+<pre><code>##       _id            OBJECTID      Neighbourhood        Hood_ID         
+##  Min.   :  1.00   Min.   :  1.00   Length:140         Length:140        
+##  1st Qu.: 35.75   1st Qu.: 35.75   Class :character   Class :character  
+##  Median : 70.50   Median : 70.50   Mode  :character   Mode  :character  
+##  Mean   : 70.50   Mean   : 70.50                                        
+##  3rd Qu.:105.25   3rd Qu.:105.25                                        
+##  Max.   :140.00   Max.   :140.00                                        
+##    Population     Assault_2014     Assault_2015     Assault_2016  
+##  Min.   : 6577   Min.   : 16.00   Min.   : 12.00   Min.   : 10.0  
+##  1st Qu.:12020   1st Qu.: 53.75   1st Qu.: 57.25   1st Qu.: 57.5  
+##  Median :16750   Median : 85.00   Median : 92.00   Median : 97.0  
+##  Mean   :19511   Mean   :117.35   Mean   :126.89   Mean   :132.2  
+##  3rd Qu.:23854   3rd Qu.:141.25   3rd Qu.:152.25   3rd Qu.:166.2  
+##  Max.   :65913   Max.   :738.00   Max.   :826.00   Max.   :888.0  
+##   Assault_2017     Assault_2018     Assault_2019    Assault_AVG    
+##  Min.   : 20.00   Min.   : 15.00   Min.   : 17.0   Min.   : 18.50  
+##  1st Qu.: 58.75   1st Qu.: 58.75   1st Qu.: 62.0   1st Qu.: 59.42  
+##  Median : 94.00   Median : 93.50   Median : 99.5   Median : 96.50  
+##  Mean   :134.61   Mean   :138.94   Mean   :145.9   Mean   :132.65  
+##  3rd Qu.:159.50   3rd Qu.:167.50   3rd Qu.:172.0   3rd Qu.:160.20  
+##  Max.   :905.00   Max.   :910.00   Max.   :916.0   Max.   :851.80  
+##   Assault_CHG       Assault_Rate_2019 AutoTheft_2014   AutoTheft_2015  
+##  Min.   :-0.40000   Min.   : 161.1    Min.   :  1.00   Min.   :  0.00  
+##  1st Qu.:-0.04000   1st Qu.: 392.3    1st Qu.: 10.00   1st Qu.: 11.00  
+##  Median : 0.05000   Median : 592.6    Median : 17.50   Median : 17.00  
+##  Mean   : 0.08707   Mean   : 714.3    Mean   : 24.84   Mean   : 22.91  
+##  3rd Qu.: 0.19250   3rd Qu.: 875.7    3rd Qu.: 29.25   3rd Qu.: 26.25  
+##  Max.   : 1.00000   Max.   :3550.8    Max.   :305.00   Max.   :261.00  
+##  AutoTheft_2016   AutoTheft_2017   AutoTheft_2018   AutoTheft_2019  
+##  Min.   :  1.00   Min.   :  0.00   Min.   :  2.00   Min.   :  3.00  
+##  1st Qu.:  9.00   1st Qu.: 10.00   1st Qu.: 13.00   1st Qu.: 15.75  
+##  Median : 16.00   Median : 18.50   Median : 22.50   Median : 27.00  
+##  Mean   : 23.32   Mean   : 25.16   Mean   : 33.72   Mean   : 37.04  
+##  3rd Qu.: 27.00   3rd Qu.: 29.50   3rd Qu.: 41.25   3rd Qu.: 42.00  
+##  Max.   :321.00   Max.   :326.00   Max.   :505.00   Max.   :482.00  
+##  AutoTheft_AVG    AutoTheft_CHG     AutoTheft_Rate_2019 BreakandEnter_2014
+##  Min.   :  2.70   Min.   :-0.6800   Min.   :  26.1      Min.   :  7.00    
+##  1st Qu.: 13.28   1st Qu.:-0.1725   1st Qu.: 102.8      1st Qu.: 30.00    
+##  Median : 18.80   Median : 0.0850   Median : 147.2      Median : 40.50    
+##  Mean   : 27.84   Mean   : 0.2241   Mean   : 185.6      Mean   : 51.28    
+##  3rd Qu.: 30.98   3rd Qu.: 0.4300   3rd Qu.: 199.2      3rd Qu.: 68.00    
+##  Max.   :366.70   Max.   : 3.1100   Max.   :1446.9      Max.   :156.00    
+##  BreakandEnter_2015 BreakandEnter_2016 BreakandEnter_2017 BreakandEnter_2018
+##  Min.   : 11.00     Min.   :  9.00     Min.   :  8.00     Min.   :  7.00    
+##  1st Qu.: 27.00     1st Qu.: 24.75     1st Qu.: 25.75     1st Qu.: 25.00    
+##  Median : 39.50     Median : 38.00     Median : 39.00     Median : 40.50    
+##  Mean   : 49.29     Mean   : 45.70     Mean   : 49.16     Mean   : 53.98    
+##  3rd Qu.: 66.00     3rd Qu.: 57.25     3rd Qu.: 62.25     3rd Qu.: 66.00    
+##  Max.   :185.00     Max.   :212.00     Max.   :261.00     Max.   :334.00    
+##  BreakandEnter_2019 BreakandEnter_AVG BreakandEnter_CHG BreakandEnter_Rate_2019
+##  Min.   :  8.00     Min.   : 10.50    Min.   :-0.6000   Min.   :  67.5         
+##  1st Qu.: 26.00     1st Qu.: 28.00    1st Qu.:-0.1550   1st Qu.: 173.6         
+##  Median : 45.00     Median : 40.75    Median : 0.0850   Median : 258.6         
+##  Mean   : 59.90     Mean   : 51.55    Mean   : 0.1501   Mean   : 305.6         
+##  3rd Qu.: 67.25     3rd Qu.: 64.45    3rd Qu.: 0.3825   3rd Qu.: 361.2         
+##  Max.   :336.00     Max.   :247.30    Max.   : 2.1300   Max.   :1549.2         
+##  Homicide_2014    Homicide_2015    Homicide_2016    Homicide_2017   
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+##  Mean   :0.4143   Mean   :0.4214   Mean   :0.5357   Mean   :0.4643  
+##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :3.0000   Max.   :4.0000   Max.   :6.0000   Max.   :5.0000  
+##  Homicide_2018     Homicide_2019     Homicide_AVG     Homicide_CHG     
+##  Min.   : 0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :-1.00000  
+##  1st Qu.: 0.0000   1st Qu.:0.0000   1st Qu.:0.2000   1st Qu.:-0.50000  
+##  Median : 0.0000   Median :0.0000   Median :0.3000   Median : 0.00000  
+##  Mean   : 0.6857   Mean   :0.5571   Mean   :0.5136   Mean   : 0.07971  
+##  3rd Qu.: 1.0000   3rd Qu.:1.0000   3rd Qu.:0.7250   3rd Qu.: 0.00000  
+##  Max.   :10.0000   Max.   :3.0000   Max.   :2.5000   Max.   : 3.00000  
+##  Homicide_Rate_2019  Robbery_2014     Robbery_2015     Robbery_2016   
+##  Min.   : 0.000     Min.   :  0.00   Min.   :  1.00   Min.   :  0.00  
+##  1st Qu.: 0.000     1st Qu.: 10.75   1st Qu.:  9.00   1st Qu.: 10.00  
+##  Median : 0.000     Median : 18.00   Median : 17.50   Median : 18.50  
+##  Mean   : 2.987     Mean   : 25.83   Mean   : 24.75   Mean   : 25.81  
+##  3rd Qu.: 5.725     3rd Qu.: 33.25   3rd Qu.: 35.00   3rd Qu.: 32.00  
+##  Max.   :24.200     Max.   :122.00   Max.   :128.00   Max.   :129.00  
+##   Robbery_2017     Robbery_2018     Robbery_2019     Robbery_AVG    
+##  Min.   :  0.00   Min.   :  1.00   Min.   :  1.00   Min.   :  3.30  
+##  1st Qu.: 10.00   1st Qu.:  9.00   1st Qu.: 11.00   1st Qu.: 11.68  
+##  Median : 20.00   Median : 18.00   Median : 16.00   Median : 20.10  
+##  Mean   : 27.89   Mean   : 25.19   Mean   : 24.41   Mean   : 25.65  
+##  3rd Qu.: 34.25   3rd Qu.: 31.00   3rd Qu.: 30.25   3rd Qu.: 30.40  
+##  Max.   :138.00   Max.   :169.00   Max.   :143.00   Max.   :135.70  
+##   Robbery_CHG      Robbery_Rate_2019 TheftOver_2014   TheftOver_2015  
+##  Min.   :-0.8300   Min.   :  7.50    Min.   : 0.000   Min.   : 1.000  
+##  1st Qu.:-0.2225   1st Qu.: 70.35    1st Qu.: 2.000   1st Qu.: 3.000  
+##  Median :-0.0500   Median :104.20    Median : 5.000   Median : 5.000  
+##  Mean   : 0.2852   Mean   :122.81    Mean   : 7.071   Mean   : 7.329  
+##  3rd Qu.: 0.4625   3rd Qu.:148.57    3rd Qu.: 8.000   3rd Qu.: 8.000  
+##  Max.   :12.0000   Max.   :668.10    Max.   :54.000   Max.   :58.000  
+##  TheftOver_2016   TheftOver_2017   TheftOver_2018   TheftOver_2019  
+##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+##  1st Qu.: 2.000   1st Qu.: 3.000   1st Qu.: 3.000   1st Qu.: 3.000  
+##  Median : 4.500   Median : 5.000   Median : 5.000   Median : 6.000  
+##  Mean   : 7.321   Mean   : 8.314   Mean   : 8.764   Mean   : 9.679  
+##  3rd Qu.: 8.000   3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.250  
+##  Max.   :59.000   Max.   :58.000   Max.   :59.000   Max.   :73.000  
+##  TheftOver_AVG    TheftOver_CHG     TheftOver_Rate_2019  Shape__Area      
+##  Min.   : 1.200   Min.   :-1.0000   Min.   :  0.00      Min.   :  424197  
+##  1st Qu.: 3.500   1st Qu.:-0.2000   1st Qu.: 22.75      1st Qu.: 1861853  
+##  Median : 5.200   Median : 0.1100   Median : 37.40      Median : 3290879  
+##  Mean   : 8.083   Mean   : 0.3776   Mean   : 47.13      Mean   : 4589400  
+##  3rd Qu.: 8.350   3rd Qu.: 0.6700   3rd Qu.: 54.65      3rd Qu.: 5402335  
+##  Max.   :56.200   Max.   : 4.0000   Max.   :283.00      Max.   :37534495  
+##  Shape__Length            geometry  
+##  Min.   : 2574   POLYGON      :140  
+##  1st Qu.: 6372   epsg:4326    :  0  
+##  Median : 8962   +proj=long...:  0  
+##  Mean   :10138                      
+##  3rd Qu.:11900                      
+##  Max.   :43081</code></pre>
+<pre class="r"><code>ggplot(data=data,aes(x = Neighbourhood, y= Population)) + geom_bar(stat=&#39;identity&#39;, position=position_dodge(), width = 1, size=0.25, colour = &quot;pink&quot;)</code></pre>
+<p><img src="../../../../post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>target &lt;- c(&quot;Woburn&quot;,&quot;Danforth&quot;,&quot;Ionview&quot;)
+filter(data, Neighbourhood%in% target)</code></pre>
+<pre><code>## Simple feature collection with 3 features and 61 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -79.34623 ymin: 43.67895 xmax: -79.20129 ymax: 43.78925
+## CRS:            EPSG:4326
+## # A tibble: 3 x 62
+##   `_id` OBJECTID Neighbourhood Hood_ID Population Assault_2014 Assault_2015
+## * &lt;int&gt;    &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+## 1    13       28 Ionview       125          13641           95          107
+## 2    97      112 Woburn        137          53485          352          395
+## 3   138       13 Danforth      066           9666           74           82
+## # … with 55 more variables: Assault_2016 &lt;int&gt;, Assault_2017 &lt;int&gt;,
+## #   Assault_2018 &lt;int&gt;, Assault_2019 &lt;int&gt;, Assault_AVG &lt;dbl&gt;,
+## #   Assault_CHG &lt;dbl&gt;, Assault_Rate_2019 &lt;dbl&gt;, AutoTheft_2014 &lt;int&gt;,
+## #   AutoTheft_2015 &lt;int&gt;, AutoTheft_2016 &lt;int&gt;, AutoTheft_2017 &lt;int&gt;,
+## #   AutoTheft_2018 &lt;int&gt;, AutoTheft_2019 &lt;int&gt;, AutoTheft_AVG &lt;dbl&gt;,
+## #   AutoTheft_CHG &lt;dbl&gt;, AutoTheft_Rate_2019 &lt;dbl&gt;, BreakandEnter_2014 &lt;int&gt;,
+## #   BreakandEnter_2015 &lt;int&gt;, BreakandEnter_2016 &lt;int&gt;,
+## #   BreakandEnter_2017 &lt;int&gt;, BreakandEnter_2018 &lt;int&gt;,
+## #   BreakandEnter_2019 &lt;int&gt;, BreakandEnter_AVG &lt;dbl&gt;, BreakandEnter_CHG &lt;dbl&gt;,
+## #   BreakandEnter_Rate_2019 &lt;dbl&gt;, Homicide_2014 &lt;int&gt;, Homicide_2015 &lt;int&gt;,
+## #   Homicide_2016 &lt;int&gt;, Homicide_2017 &lt;int&gt;, Homicide_2018 &lt;int&gt;,
+## #   Homicide_2019 &lt;int&gt;, Homicide_AVG &lt;dbl&gt;, Homicide_CHG &lt;dbl&gt;,
+## #   Homicide_Rate_2019 &lt;dbl&gt;, Robbery_2014 &lt;int&gt;, Robbery_2015 &lt;int&gt;,
+## #   Robbery_2016 &lt;int&gt;, Robbery_2017 &lt;int&gt;, Robbery_2018 &lt;int&gt;,
+## #   Robbery_2019 &lt;int&gt;, Robbery_AVG &lt;dbl&gt;, Robbery_CHG &lt;dbl&gt;,
+## #   Robbery_Rate_2019 &lt;dbl&gt;, TheftOver_2014 &lt;int&gt;, TheftOver_2015 &lt;int&gt;,
+## #   TheftOver_2016 &lt;int&gt;, TheftOver_2017 &lt;int&gt;, TheftOver_2018 &lt;int&gt;,
+## #   TheftOver_2019 &lt;int&gt;, TheftOver_AVG &lt;dbl&gt;, TheftOver_CHG &lt;dbl&gt;,
+## #   TheftOver_Rate_2019 &lt;dbl&gt;, Shape__Area &lt;dbl&gt;, Shape__Length &lt;dbl&gt;,
+## #   geometry &lt;POLYGON [°]&gt;</code></pre>
+<pre class="r"><code>data2&lt;- read.xlsx(&quot;Book2.xlsx&quot;, sheet = 1)
+View(data2)</code></pre>
+<pre><code>## Warning in View(data2): unable to open display</code></pre>
+<pre><code>## Error in .External2(C_dataviewer, x, title): unable to start data viewer</code></pre>
+<pre class="r"><code>ggplot(data=data2,aes(x=Year,y=Rate))+geom_bar(stat = &quot;identity&quot;,width = 0.5, size=0.25)+geom_line()</code></pre>
+<p><img src="../../../../post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>data1&lt;- read.xlsx(&quot;Book1.xlsx&quot;, sheet = 1)
+View(data1)</code></pre>
+<pre><code>## Warning in View(data1): unable to open display</code></pre>
+<pre><code>## Error in .External2(C_dataviewer, x, title): unable to start data viewer</code></pre>
+<pre class="r"><code>ggplot(data=data1,aes(x=Year,y=Rates))+geom_bar(stat = &quot;identity&quot;,width = 0.5, size=0.25)+geom_line()</code></pre>
+<p><img src="../../../../post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre class="r"><code>data3&lt;- read.xlsx(&quot;Book3.xlsx&quot;, sheet = 1)
+View(data3)</code></pre>
+<pre><code>## Warning in View(data3): unable to open display</code></pre>
+<pre><code>## Error in .External2(C_dataviewer, x, title): unable to start data viewer</code></pre>
+<pre class="r"><code>ggplot(data=data3,aes(x=Year,y=Rates))+geom_bar(stat = &quot;identity&quot;,width = 0.5, size=0.25)+geom_line()</code></pre>
+<p><img src="../../../../post/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<p>###Reference
+- Hadley Wickham, Jim Hester and Winston Chang (2020). devtools: Tools
+to Make Developing R Packages Easier. R package version 2.3.1.
+<a href="https://CRAN.R-project.org/package=devtools" class="uri">https://CRAN.R-project.org/package=devtools</a></p>
+<ul>
+<li><p>JJ Allaire and Yihui Xie and Jonathan McPherson and Javier Luraschi
+and Kevin Ushey and Aron Atkins and Hadley Wickham and Joe Cheng and
+Winston Chang and Richard Iannone (2020). rmarkdown: Dynamic
+Documents for R. R package version 2.3. URL <a href="https://rmarkdown.rstudio.com" class="uri">https://rmarkdown.rstudio.com</a>.</p></li>
+<li><p>R Core Team (2020). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria.
+URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p></li>
+<li><p>Sharla Gelfand (2020). opendatatoronto: Access the City of Toronto
+Open Data Portal. R package version 0.1.3.
+<a href="https://CRAN.R-project.org/package=opendatatoronto" class="uri">https://CRAN.R-project.org/package=opendatatoronto</a></p></li>
+</ul>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../../index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="../../../../images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+
